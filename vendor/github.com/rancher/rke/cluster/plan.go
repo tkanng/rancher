@@ -195,6 +195,7 @@ func (c *Cluster) BuildKubeAPIProcess(prefixPath string) v3.Process {
 
 	// Override args if they exist, add additional args
 	for arg, value := range c.Services.KubeAPI.ExtraArgs {
+		// 删除extra_args
 		if _, ok := c.Services.KubeAPI.ExtraArgs[arg]; ok {
 			CommandArgs[arg] = value
 		}
@@ -355,6 +356,17 @@ func (c *Cluster) BuildKubeletProcess(host *hosts.Host, prefixPath string) v3.Pr
 	if host.IsControl && !host.IsWorker {
 		CommandArgs["register-with-taints"] = unschedulableControlTaint
 	}
+	// 尝试加上Taint
+	//CommandArgs["register-with-taints"] = unschedulableControlTaint
+	logrus.Infof("[kangqiang]Host.ToAddLabels: %v \n", host.ToAddLabels)
+	// add taint
+	if host.IsWorker && !host.IsEtcd && !host.IsControl {
+		v := host.ToAddLabels["nodeType"]
+		if v == "local" {
+			logrus.Infof("[kangqiang] ADD Taints:%s,\n", unschedulableLocalNodeTaint)
+			CommandArgs["register-with-taints"] = unschedulableLocalNodeTaint
+		}
+	}
 	if host.Address != host.InternalAddress {
 		CommandArgs["node-ip"] = host.InternalAddress
 	}
@@ -377,11 +389,13 @@ func (c *Cluster) BuildKubeletProcess(host *hosts.Host, prefixPath string) v3.Pr
 			c.Services.Kubelet.ExtraEnv,
 			fmt.Sprintf("%s=%s", KubeletDockerConfigFileEnv, path.Join(prefixPath, KubeletDockerConfigPath)))
 	}
+	// 如果v1.12不需要设置cadvisor-port参数
 	// check if our version has specific options for this component
 	serviceOptions := c.GetKubernetesServicesOptions()
 	if serviceOptions.Kubelet != nil {
 		for k, v := range serviceOptions.Kubelet {
 			// if the value is empty, we remove that option
+			// cadvisor_port is deleted 删除了
 			if len(v) == 0 {
 				delete(CommandArgs, k)
 				continue

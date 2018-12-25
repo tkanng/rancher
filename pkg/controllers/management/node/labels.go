@@ -87,6 +87,8 @@ func copyMap(in map[string]string) map[string]string {
 }
 
 func getNodePlan(cluster *v3.Cluster, node *v3.Node) (*v3.RKEConfigNodePlan, error) {
+	// TODO: 这里的dockerInfo是一个大小为1的map
+	// TODO: KANGQIANG
 	dockerInfo, err := librke.GetDockerInfo(node)
 	if err != nil {
 		return nil, err

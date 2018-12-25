@@ -214,6 +214,15 @@ var (
 			CanalCNIBinaries:   m("rancher/canal-cni:v0.0.1-nanoserver-1803"),
 			KubeletPause:       m("rancher/kubelet-pause:v0.0.1-nanoserver-1803"),
 		},
+		"v1.12.0-tusimple1-1": {
+			// for windows: images are same with version v1.12.0-rancher1-1
+			NginxProxy:         m("rancher/nginx-proxy:v0.0.1-nanoserver-1803"),
+			KubernetesBinaries: m("rancher/hyperkube:v1.12.0-nanoserver-1803"),
+			FlannelCNIBinaries: m("rancher/flannel-cni:v0.0.1-nanoserver-1803"),
+			CalicoCNIBinaries:  m("rancher/calico-cni:v0.0.1-nanoserver-1803"),
+			CanalCNIBinaries:   m("rancher/canal-cni:v0.0.1-nanoserver-1803"),
+			KubeletPause:       m("rancher/kubelet-pause:v0.0.1-nanoserver-1803"),
+		},
 		"v1.12.1-rancher1-1": {
 			NginxProxy:         m("rancher/nginx-proxy:v0.0.1-nanoserver-1803"),
 			KubernetesBinaries: m("rancher/hyperkube:v1.12.1-nanoserver-1803"),
@@ -235,9 +244,10 @@ var (
 
 func initWindows() {
 	badVersions := map[string]bool{
-		"v1.8.11-rancher2-1": true,
-		"v1.8.11-rancher1":   true,
-		"v1.8.10-rancher1-1": true,
+		"v1.8.11-rancher2-1":  true,
+		"v1.8.11-rancher1":    true,
+		"v1.8.10-rancher1-1":  true,
+		"v1.12.0-tusimple1-1": true,
 	}
 
 	if K8sVersionWindowsSystemImages != nil {
